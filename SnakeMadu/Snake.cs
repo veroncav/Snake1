@@ -1,111 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
-using SnakeMadu;
 
-namespace SnakeMadu
+namespace SnakeGame1
 {
-    internal class Snake : Figure
+    class Snake
     {
+        public Queue<Point> body; // Хранит координаты тела змейки
+        public Direction direction; // Текущее направление движения змейки
+        private SnakeMadu game; // Ссылка на игру, чтобы получить настройки (например, цвет змейки)
 
-        Direction direction;
-
-        public Snake(Point tail, int length, Direction _direction)
+        // Конструктор змейки
+        public Snake(Point tail, int length, Direction direction, SnakeMadu game)
         {
-            direction = _direction;
-            pList = new List<Point>();
+            body = new Queue<Point>();
+            this.direction = direction;
+            this.game = game;
+
+            // Генерация тела змейки от хвоста в сторону головы
             for (int i = 0; i < length; i++)
             {
                 Point p = new Point(tail);
-                p.Move(i, direction);
-                pList.Add(p);
+                p.Move(i, direction); // Двигаем каждую следующую часть тела
+                body.Enqueue(p);
             }
         }
 
+        // Движение змейки
         public void Move()
         {
-            Point tail = pList.First();
-            pList.Remove(tail);
-            Point head = GetNextPoint();
-            pList.Add(head);
+            Point tail = body.Dequeue(); // Удаляем хвост
+            Point head = GetNextPoint(); // Получаем следующую точку головы
+            body.Enqueue(head); // Добавляем её в тело змейки
 
-            tail.Clear();
-            head.Draw();
+            tail.Clear(); // Очищаем символ с консоли
+
+            Console.ForegroundColor = game.GetSnakeColor(); // Устанавливаем цвет змейки
+            head.Draw(); // Отрисовываем голову
+            Console.ResetColor(); // Сброс цвета
         }
 
+        // Получение следующей координаты в текущем направлении
         public Point GetNextPoint()
         {
-            Point head = pList.Last();
+            Point head = body.Last();
             Point nextPoint = new Point(head);
             nextPoint.Move(1, direction);
             return nextPoint;
         }
 
-        public bool IsHitTail()
+        // Проверка, столкнулась ли змейка с чем-то
+        public bool IsHit(Point p)
         {
-            var head = pList.Last();
-            for (int i = 0; i < pList.Count - 2; i++)
-            {
-                if (head.IsHit(pList[i]))
-                    return true;
-            }
-            return false;
+            return body.Any(b => b.IsHit(p));
         }
 
-        public void HandleKey(ConsoleKey key)
-        {
-            if (key == ConsoleKey.LeftArrow)
-                direction = Direction.LEFT;
-            else if (key == ConsoleKey.RightArrow)
-                direction = Direction.RIGHT;
-            else if (key == ConsoleKey.DownArrow)
-                direction = Direction.DOWN;
-            else if (key == ConsoleKey.UpArrow)
-                direction = Direction.UP;
-        }
-
-        public bool Eat(Point food)
+        // Увеличение змейки при съедании еды
+        public void Grow()
         {
             Point head = GetNextPoint();
-            if (head.IsHit(food))
+            body.Enqueue(head);
 
-            {
-                food.sym = head.sym;
-                pList.Add(food);
-                return true;
-            }
-            else
-                return false;
+            Console.ForegroundColor = game.GetSnakeColor();
+            head.Draw();
+            Console.ResetColor();
         }
-
-        public bool Eat2(Point food2)
-        {
-            Point head = GetNextPoint();
-            if (head.IsHit(food2))
-            {
-                food2.sym = head.sym;
-                pList.Add(food2);
-                return true;
-            }
-            else
-                return false;
-        }
-
-        public bool Eat3(Point food3)
-        {
-            Point head = GetNextPoint();
-            if (head.IsHit(food3))
-            {
-                food3.sym = head.sym;
-                pList.Add(food3);
-                return true;
-            }
-            else
-                return false;
-        }
-
     }
 }

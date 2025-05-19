@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace SnakeMadu;
+namespace SnakeGame1;    
 
 class PlayerResult
 {

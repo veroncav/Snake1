@@ -1,56 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SnakeMadu
+namespace SnakeGame1
 {
-    internal class FoodCreator
+    class FoodCreator
     {
+        private int x;
+        private int y;
+        private char symbol; // Символ, обозначающий еду ('$' или 'X')
+        private ConsoleColor color; // Цвет еды
+        private Random random = new Random();
+        public bool IsBonus { get; private set; } // Флаг, бонусная ли еда
+        private DateTime createdTime; // Время появления еды
 
-        int mapWidht;
-        int mapHeight;
-        char sym;
-        private ConsoleColor color;
-
-        Random random = new Random();
-
-        public FoodCreator(int mapWidth, int mapHeight, char sym, ConsoleColor color)
+        // Конструктор с размерами поля
+        public FoodCreator(int x, int y)
         {
-            this.mapWidht = mapWidth;
-            this.mapHeight = mapHeight;
-            this.sym = sym;
-            this.color = color;
+            this.x = x;
+            this.y = y;
         }
 
-
-
-        public Point CreateFood()
+        // Метод создания еды. Если bonus = true — создаём X (бонус), иначе обычную еду
+        public Point CreateFood(bool bonus = false)
         {
+            int foodX = random.Next(2, x - 2);
+            int foodY = random.Next(2, y - 2);
+            IsBonus = bonus;
+            symbol = bonus ? 'X' : '$';
+            color = bonus ? ConsoleColor.Red : ConsoleColor.Yellow;
+            createdTime = DateTime.Now;
 
-            int x = random.Next(2, mapWidht - 2);
-            int y = random.Next(2, mapHeight - 2);
-            return new Point(x, y, sym, color);
+            Point food = new Point(foodX, foodY, symbol, color);
+            food.Draw();
+            return food;
         }
 
-        public Point CreateFood2()
+        // Проверяем, не просрочена ли бонусная еда (10 секунд)
+        public bool IsExpired()
         {
-
-            int x = random.Next(2, mapWidht - 2);
-            int y = random.Next(2, mapHeight - 2);
-            return new Point(x, y, sym, color);
+            return IsBonus && (DateTime.Now - createdTime).TotalSeconds > 10;
         }
-
-        public Point CreateFood3()
-        {
-
-            int x = random.Next(2, mapWidht - 2);
-            int y = random.Next(2, mapHeight - 2);
-            return new Point(x, y, sym, color);
-        }
-
-
     }
 }

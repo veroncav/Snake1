@@ -6,7 +6,7 @@ using NAudio;
 using NAudio.Wave;
 using System.Threading.Tasks;
 
-namespace SnakeMadu
+namespace SnakeGame1
 {
     public class Sound
     {

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SnakeMadu;
+using SnakeGame1;
 
-namespace SnakeMadu
+namespace SnakeGame1
 {
     internal class Point
     {

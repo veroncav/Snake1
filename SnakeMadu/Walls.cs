@@ -1,53 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SnakeMadu;
 
-namespace SnakeMadu
-{ 
-    internal class Walls
+namespace SnakeGame1
+{
+    class Walls
     {
+        List<Point> wallList; // Список всех точек стены
 
-        List<Figure> wallList;
-
+        // Конструктор, отрисовывающий рамку по периметру поля
         public Walls(int mapWidth, int mapHeight)
         {
+            wallList = new List<Point>();
 
-            wallList = new List<Figure>();
-
-
-            // Отрисовка рамочки
-            HorizontalLine upLine = new HorizontalLine(0, mapWidth - 2, 0, '+');
-            HorizontalLine downLine = new HorizontalLine(0, mapWidth - 2, mapHeight - 1, '+');
-            VerticalLine leftLine = new VerticalLine(0, mapHeight - 1, 0, '+');
-            VerticalLine rightLine = new VerticalLine(0, mapHeight - 1, mapWidth - 2, '+');
-
-            wallList.Add(upLine);
-            wallList.Add(downLine);
-            wallList.Add(leftLine);
-            wallList.Add(rightLine);
-        }
-
-        internal bool IsHit(Figure figure)
-        {
-            foreach (var wall in wallList)
+            // Верхняя и нижняя границы
+            for (int x = 0; x < mapWidth; x++)
             {
-                if (wall.IsHit(figure))
-                {
-                    return true;
-                }
+                wallList.Add(new Point(x, 0, '#', ConsoleColor.Gray));
+                wallList.Add(new Point(x, mapHeight - 1, '#', ConsoleColor.Gray));
             }
-            return false;
+
+            // Левая и правая границы
+            for (int y = 0; y < mapHeight; y++)
+            {
+                wallList.Add(new Point(0, y, '#', ConsoleColor.Gray));
+                wallList.Add(new Point(mapWidth - 1, y, '#', ConsoleColor.Gray));
+            }
         }
 
+        // Отрисовка стен
         public void Draw()
         {
             foreach (var wall in wallList)
             {
                 wall.Draw();
             }
+        }
+
+        // Проверка, врезалась ли змейка в стену
+        public bool IsHit(Point p)
+        {
+            foreach (var wall in wallList)
+            {
+                if (wall.IsHit(p))
+                    return true;
+            }
+            return false;
         }
     }
 }
