@@ -1,0 +1,198 @@
+/* === Общие настройки === */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(180deg, #fdf6f0, #ffe9d6);
+    color: #2d2d2d;
+    overflow-x: hidden;
+}
+
+/* === Контейнер страницы === */
+.page-wrapper {
+    min-height: 100vh;
+    padding-bottom: 70px; /* высота футера + небольшой запас */
+}
+
+/* === Контент страницы === */
+.content {
+    padding: 20px;
+}
+
+/* === Навигация === */
+.navbar {
+    background: #ffffffcc;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 0.8rem 1.2rem;
+}
+
+    .navbar .navbar-brand {
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #ff6f61;
+    }
+
+    .navbar .nav-link {
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        color: #444;
+        transition: all 0.2s ease;
+    }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            background: #ffede9;
+            color: #ff6f61 !important;
+        }
+
+/* === Карточки === */
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    background: #ffffff;
+    padding: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+    }
+
+.card-header {
+    background: linear-gradient(90deg, #ff6f61, #ff9673);
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    padding: 0.8rem;
+}
+
+/* === Таблицы === */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .table thead th {
+        background: #ffe9d6;
+        color: #555;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.04em;
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover {
+        background: #fff2ed;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+    }
+
+/* === Кнопки === */
+.btn-primary,
+.btn-success,
+.btn-secondary {
+    background: linear-gradient(90deg, #ff6f61, #ff9673);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.5rem 1.2rem;
+    transition: all 0.2s ease;
+}
+
+    .btn-primary:hover,
+    .btn-success:hover,
+    .btn-secondary:hover {
+        filter: brightness(0.9);
+    }
+
+.btn-outline-secondary {
+    border-color: #ccc;
+    color: #666;
+}
+
+    .btn-outline-secondary:hover {
+        background: #f2f2f2;
+    }
+
+.btn-danger {
+    background: linear-gradient(90deg, #ff3b3b, #ff0000);
+}
+
+    .btn-danger:hover {
+        filter: brightness(0.9);
+    }
+
+/* === Формы === */
+.form-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 0 0.2rem rgba(255,111,97,0.2);
+    }
+
+/* === dl элементы === */
+dl.row dt {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.04em;
+}
+
+dl.row dd {
+    font-weight: 600;
+    color: #333;
+}
+
+/* === Футер приклеен к низу экрана === */
+.footer {
+    position: fixed; /* фиксированный футер */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px; /* высота футера */
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255,111,97,0.2);
+    text-align: center;
+    line-height: 60px; /* вертикальное центрирование текста */
+    font-weight: 500;
+    z-index: 1000;
+}
+
+    .footer a {
+        color: #ff6f61;
+        text-decoration: none;
+    }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+/* === Адаптивность === */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
