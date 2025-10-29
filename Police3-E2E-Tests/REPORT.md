@@ -1,23 +1,20 @@
-# REPORT.md
+# Police3 E2E Test Report
 
-## Что работает
-1. Вход администратора проходит успешно.
-2. Обычный пользователь получает доступ, но не видит админских элементов.
-3. Создание нового офицера добавляет строку в список.
-4. Редактирование офицера сохраняет данные.
-5. Удаление офицера удаляет запись.
+## What works
+1. Admin login succeeds.
+2. Regular user login works; admin-only UI elements are hidden.
+3. Admin can assign and remove admin roles.
+4. Admin can edit user roles.
+5. Admin can remove users from the system.
+6. All tests are fully automated and independent.
 
-## Что не работает / замечания
-- Локаторы в тестах ориентированы на типичные селекторы (text, name, button text). Если интерфейс отличается, локаторы нужно подправить.
-- Если сайт ограничивает частые операции или имеет CSRF/анти-бот защиты, возможны фэйлы.
-- Нет прямого доступа к БД — все операции идут через UI.
+## Notes / Limitations
+- Locators rely on button text and input names; if the UI changes, tests may need updates.
+- No direct database access; everything is tested via UI.
+- Playwright captures screenshots and videos for failed tests in `playwright-report`.
 
-## Скриншоты и видео
-Если тест падает, Playwright сохранит скриншоты и видео в `playwright-report` и покажет их в HTML-отчёте.
-
-## Как проверить учителю
-1. Распаковать архив.
-2. `npm install` и `npx playwright install`
-3. `cp .env.example .env`
-4. `npm run test:e2e`
-5. `npm run show-report` — открыть HTML-отчёт и показать результаты.
+## How to verify
+1. Install dependencies (`npm install`, `npx playwright install`).
+2. Set environment variables (`.env`).
+3. Run tests (`npm run test:e2e`).
+4. Open HTML report (`npx playwright show-report`) to view results.
