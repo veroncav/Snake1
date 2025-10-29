@@ -1,43 +1,46 @@
-# Police3 E2E Tests (ready-to-run)
+# Police3 E2E Tests
 
-Этот архив содержит готовый проект с E2E тестами для сайта Police3.
-Цель: выдать готовый набор, который можно открыть в VS Code и запустить командой `npm run test:e2e`.
+## Overview
 
-## Системные требования
-- OS: Windows / macOS / Linux
-- Node.js >= 20
-- Рекомендуем: Visual Studio Code
-- Браузеры: Chromium/Firefox/WebKit (устанавливаются Playwright)
+This project contains automated end-to-end (E2E) tests for the **Police3** web application.  
+The tests verify that the application’s main functionalities for both admin and regular users work correctly.
 
-## Как запустить (быстро)
-1. Распакуйте архив и откройте папку `Police3-E2E-Tests` в VS Code.
-2. Откройте терминал (Ctrl+`).
-3. Установите зависимости:
-   ```bash
-   npm install
-   npx playwright install
-   ```
-4. Создайте файл с переменными окружения:
-   ```bash
-   cp .env.example .env
-   ```
-   (если вы на Windows PowerShell: `Copy-Item .env.example .env`)
-5. Запустите тесты:
-   ```bash
-   npm run test:e2e
-   ```
-6. Просмотр отчёта:
-   ```bash
-   npm run show-report
-   ```
+---
 
-## Что внутри
-- 5 независимых E2E тестов в `tests/e2e/`
-- `.env.example` — пример переменных окружения (без паролей в коде)
-- `playwright.config.js` — конфигурация Playwright
-- `REPORT.md` — краткий отчёт-шаблон
+## Tested features
 
-## Примечания
-- Тесты работают с сайтом: https://veronikavanitseva24.thkit.ee/Police3
-- Логины: Admin / 12345, kasutaja / 12345 (указано в .env.example)
-- Тесты стараются создавать уникальные тестовые записи (добавляют timestamp) и удалять их в конце, чтобы не «протекали».
+- **Admin login**  
+  - Administrator can log in successfully.
+
+- **Regular user login**  
+  - Regular users can log in.  
+  - Admin-only features are hidden for regular users.
+
+- **User role management**  
+  - Admin can assign or remove the admin role from other users.  
+  - The current UI does not provide a "create new user" form; tests verify that this control is not present.
+
+- **Editing user role**  
+  - Admin can change a user role (Admin ↔ Regular user).
+
+- **Deleting roles/users**  
+  - Admin can remove the admin role from a user (role removal is covered by tests).
+
+---
+
+## Test accounts
+
+Use these test credentials when reviewing the tests or running them:
+
+- **Admin**
+  - Username: `Admin`
+  - Password: `12345`
+
+- **Regular user**
+  - Username: `kasutaja`
+  - Password: `12345`
+
+These credentials are for testing the deployed site at `http://veronikavanitseva24.thkit.ee/Police3`
+
+
+
