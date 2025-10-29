@@ -1,0 +1,15 @@
+{
+  "name": "police3-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests for Police3 (Playwright)",
+  "scripts": {
+    "test:e2e": "npx playwright test",
+    "test:e2e:headed": "npx playwright test --headed",
+    "test:e2e:debug": "npx playwright test --debug",
+    "show-report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "dotenv": "^16.4.5"
+  }
+}
