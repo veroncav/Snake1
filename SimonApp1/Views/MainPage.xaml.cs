@@ -1,5 +1,4 @@
-﻿using Java.Sql;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using SimonApp1.Database;
 using SimonApp1.Models;
