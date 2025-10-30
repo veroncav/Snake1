@@ -1,93 +1,172 @@
-﻿using Microsoft.Maui.Controls;
-using SimonApp1.Helpers;
-using System.Collections.Generic;
+﻿using Java.Sql;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using SimonApp1.Database;
+using SimonApp1.Models;
+using SimonApp1.Services;
 
-namespace SimonApp1.Views
+namespace SimonApp1.Views;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    private readonly SettingsService settings;
+    private readonly ThemeService themeService;
+    private readonly AppDatabase db;
+
+    private List<Button> colorButtons;
+    private List<int> sequence = new();
+    private List<int> userInput = new();
+    private bool isUserTurn = false;
+    private Random rnd = new();
+    private int score = 0;
+
+    // Цвета (можно привязывать в MVVM)
+    public Color GreenColor => Color.FromArgb("#2ecc71");
+    public Color RedColor => Color.FromArgb("#e74c3c");
+    public Color YellowColor => Color.FromArgb("#f1c40f");
+    public Color BlueColor => Color.FromArgb("#3498db");
+
+    public MainPage(SettingsService settings, ThemeService themeService, AppDatabase db)
     {
-        private List<Button> colorButtons;
-        private List<int> sequence = new();
-        private List<int> userInput = new();
-        private bool isUserTurn = false;
-        private Random random = new();
+        InitializeComponent();
+        this.settings = settings;
+        this.themeService = themeService;
+        this.db = db;
 
-        public MainPage()
+        colorButtons = new List<Button> { GreenButton, RedButton, YellowButton, BlueButton };
+
+        // bind entry
+        NameEntry.Text = settings.PlayerName;
+
+        // привяжем цвета через BindingContext (упрощённо)
+        BindingContext = this;
+    }
+
+    private async void OnSettingsClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new SettingsPage(settings, themeService));
+    }
+
+    private async void OnStartClicked(object sender, EventArgs e)
+    {
+        // сохранить имя
+        settings.PlayerName = NameEntry.Text?.Trim() ?? "Player";
+
+        sequence.Clear();
+        userInput.Clear();
+        score = 0;
+        isUserTurn = false;
+        StartButton.IsEnabled = false;
+        await Task.Delay(300);
+
+        await NextRoundAsync();
+    }
+
+    private async Task NextRoundAsync()
+    {
+        if (sequence.Count >= settings.MaxRounds)
         {
-            InitializeComponent();
-
-            colorButtons = new List<Button> { GreenButton, RedButton, YellowButton, BlueButton };
+            // победа
+            await ShowResultAsync(true);
+            return;
         }
 
-        private async void OnStartClicked(object sender, EventArgs e)
+        // добавляем шаг
+        sequence.Add(rnd.Next(0, colorButtons.Count));
+        await PlaySequenceAsync();
+        isUserTurn = true;
+        userInput.Clear();
+    }
+
+    private async Task PlaySequenceAsync()
+    {
+        isUserTurn = false;
+        foreach (var idx in sequence)
         {
-            sequence.Clear();
-            userInput.Clear();
+            var btn = colorButtons[idx];
+            await HighlightButtonAsync(btn);
+            await Task.Delay(300);
+        }
+    }
+
+    private async Task HighlightButtonAsync(Button btn)
+    {
+        var original = btn.Background;
+        // подсветка: увеличим и временно сменим цвет на белый
+        await btn.ScaleTo(1.08, 110);
+        var prev = btn.BackgroundColor;
+        btn.BackgroundColor = Colors.White;
+        if (settings.SoundOn)
+        {
+            // проиграть звук, если у тебя есть AudioHelper
+            try { await Helpers.AudioHelper.PlaySoundAsync("good.wav"); } catch { }
+        }
+        await Task.Delay(220);
+        btn.BackgroundColor = prev;
+        await btn.ScaleTo(1, 120);
+    }
+
+    private async void OnColorClicked(object sender, EventArgs e)
+    {
+        if (!isUserTurn) return;
+
+        var btn = (Button)sender;
+        int idx = colorButtons.IndexOf(btn);
+
+        // местная подсветка и звук
+        await HighlightButtonAsync(btn);
+
+        userInput.Add(idx);
+
+        int i = userInput.Count - 1;
+        if (userInput[i] != sequence[i])
+        {
+            // проигрыш
+            await ShowResultAsync(false);
+            return;
+        }
+
+        if (userInput.Count == sequence.Count)
+        {
+            // успешное повторение
+            score = sequence.Count;
             isUserTurn = false;
-
-            StatusLabel.Text = "Смотри внимательно!";
-            await DisplaySequence();
+            await Task.Delay(400);
+            await NextRoundAsync();
         }
+    }
 
-        private async Task DisplaySequence()
+    private async Task ShowResultAsync(bool won)
+    {
+        isUserTurn = false;
+        Overlay.IsVisible = true;
+        ResultTitle.Text = won ? "Победа!" : "Игра окончена";
+        ResultText.Text = won ? $"Вы прошли все уровни! Очки: {score}" : $"Ошибка! Очки: {score}";
+        StartButton.IsEnabled = true;
+        // Pause sounds if needed
+    }
+
+    private async void OnRestartClicked(object sender, EventArgs e)
+    {
+        Overlay.IsVisible = false;
+        sequence.Clear();
+        userInput.Clear();
+        score = 0;
+        await Task.Delay(200);
+    }
+
+    private async void OnSaveScoreClicked(object sender, EventArgs e)
+    {
+        Overlay.IsVisible = false;
+        // Сохранить рекорд в БД
+        var rec = new ScoreRecord
         {
-            // Добавляем новый шаг
-            sequence.Add(random.Next(0, colorButtons.Count));
-
-            foreach (var index in sequence)
-            {
-                var btn = colorButtons[index];
-
-                var originalColor = btn.BackgroundColor;
-                btn.BackgroundColor = Colors.White;
-
-                await AudioHelper.PlaySoundAsync("good.wav");
-
-                await Task.Delay(400);
-
-                btn.BackgroundColor = originalColor;
-                await Task.Delay(200);
-            }
-
-            isUserTurn = true;
-            userInput.Clear();
-            StatusLabel.Text = "Теперь твоя очередь!";
-        }
-
-        private async void OnColorClicked(object sender, EventArgs e)
-        {
-            if (!isUserTurn) return;
-
-            var clickedButton = (Button)sender;
-            int index = colorButtons.IndexOf(clickedButton);
-
-            // Проигрываем звук и подсветку
-            var originalColor = clickedButton.BackgroundColor;
-            clickedButton.BackgroundColor = Colors.White;
-            await AudioHelper.PlaySoundAsync("bad.wav");
-            await Task.Delay(200);
-            clickedButton.BackgroundColor = originalColor;
-
-            userInput.Add(index);
-
-            // Проверяем ввод игрока
-            if (userInput[userInput.Count - 1] != sequence[userInput.Count - 1])
-            {
-                isUserTurn = false;
-                StatusLabel.Text = $"Ошибка! Очки: {sequence.Count - 1}";
-                await AudioHelper.PlaySoundAsync("bad.wav");
-                return;
-            }
-
-            // Если игрок ввёл всё правильно
-            if (userInput.Count == sequence.Count)
-            {
-                isUserTurn = false;
-                StatusLabel.Text = "Правильно! Следующий раунд...";
-                await Task.Delay(800);
-                await DisplaySequence();
-            }
-        }
+            PlayerName = settings.PlayerName,
+            Score = score,
+            Date = DateTime.Now
+        };
+        await db.SaveScoreAsync(rec);
+        await DisplayAlert("Сохранено", "Рекорд сохранён", "OK");
     }
 }
 

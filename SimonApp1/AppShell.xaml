@@ -3,13 +3,13 @@
     x:Class="SimonApp1.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SimonApp1"
+    xmlns:views="clr-namespace:SimonApp1.Views"
     Shell.FlyoutBehavior="Flyout"
     Title="SimonApp1">
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
+        ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
 
 </Shell>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+
 namespace SimonApp1
 {
     public static class MauiProgram
@@ -17,6 +18,9 @@ namespace SimonApp1
 
 #if DEBUG
     		builder.Logging.AddDebug();
+            builder.Services.AddSingleton<SimonApp1.Services.ThemeService>();
+            builder.Services.AddSingleton<SimonApp1.Services.SettingsService>();
+
 #endif
 
             return builder.Build();
