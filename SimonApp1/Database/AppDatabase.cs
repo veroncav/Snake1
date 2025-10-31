@@ -1,20 +1,26 @@
 using SQLite;
 using SimonApp1.Models;
 
-namespace SimonApp1.Database
+namespace SimonApp1.Database;
+
+public class AppDatabase
 {
-    public class AppDatabase
+    private readonly SQLiteAsyncConnection _database;
+
+    public AppDatabase()
     {
-        private readonly SQLiteAsyncConnection _db;
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "simonapp.db3");
+        _database = new SQLiteAsyncConnection(dbPath);
+        _database.CreateTableAsync<ScoreRecord>().Wait();
+    }
 
-        public AppDatabase(string dbPath)
-        {
-            _db = new SQLiteAsyncConnection(dbPath);
-            _db.CreateTableAsync<ScoreRecord>().Wait();
-        }
+    public Task<int> SaveScoreAsync(ScoreRecord record)
+    {
+        return _database.InsertAsync(record);
+    }
 
-        public Task<List<ScoreRecord>> GetScoresAsync() => _db.Table<ScoreRecord>().ToListAsync();
-
-        public Task<int> SaveScoreAsync(ScoreRecord score) => _db.InsertAsync(score);
+    public Task<List<ScoreRecord>> GetScoresAsync()
+    {
+        return _database.Table<ScoreRecord>().OrderByDescending(x => x.Score).ToListAsync();
     }
 }
